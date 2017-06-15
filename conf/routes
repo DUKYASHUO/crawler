@@ -9,6 +9,7 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
+GET     /ctrip/ping                 controllers.CtripController.ping
 GET     /ctrip/create               controllers.CtripController.create
 
 # Map static resources from the /public folder to the /assets URL path
