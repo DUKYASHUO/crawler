@@ -2,15 +2,23 @@ package controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
+
 import daos.params.CtripDao.Create
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import org.joda.time.DateTime
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.mvc._
 import services.CtripService
+
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
 
 class CtripController @Inject()(ctripService: CtripService, ws: WSClient) extends Controller {
+
+  val url = "http://www.baidu.com"
 
   def create() = Action {
     val id = ctripService.create(
@@ -27,7 +35,7 @@ class CtripController @Inject()(ctripService: CtripService, ws: WSClient) extend
   }
 
   def ping() = Action {
-    val request: WSRequest = ws.url("http://www.baidu.com")
+    val request: WSRequest = ws.url(url)
 
     val complexRequest: WSRequest =
       request.withHeaders("Accept" -> "application/json")
@@ -42,5 +50,17 @@ class CtripController @Inject()(ctripService: CtripService, ws: WSClient) extend
 
     val result = Await.result(futureResponse, Duration(100, "millis")).allHeaders
     Ok("Got it ." + result)
+  }
+
+  def jsoupBrowser() = Action {
+    val jsoupBrowser = JsoupBrowser()
+    val doc = jsoupBrowser.get(url)
+
+    val wrapper = doc >?> element("#wrapper")
+    val div = doc >?> elementList("div")
+
+    println(wrapper)
+    println(div)
+    Ok("Got it " + div)
   }
 }
