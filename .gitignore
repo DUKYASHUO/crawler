@@ -1,0 +1,27 @@
+# Ignore Play! working directory #
+bin/
+/db
+.cache-main
+.classpath
+.project
+LICENSE
+/libexec
+/.settings
+/logs/
+/modules
+/project/target
+/project/project
+/target
+test-result
+server.pid
+*.eml
+*.iml
+/dist/
+.cache
+.cache-main
+.cache-tests
+.classpath
+.project
+.idea/*
+/project/target/
+/project/project/
