@@ -15,10 +15,11 @@ import scala.concurrent.{Await, Future}
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
+import net.ruippeixotog.scalascraper.model.Element
 
 class CtripController @Inject()(ctripService: CtripService, ws: WSClient) extends Controller {
 
-  val url = "http://www.baidu.com"
+  val url = "http://www.ctrip.com/#ctm_ref=nb_cn_top"
 
   def create() = Action {
     val id = ctripService.create(
@@ -54,13 +55,33 @@ class CtripController @Inject()(ctripService: CtripService, ws: WSClient) extend
 
   def jsoupBrowser() = Action {
     val jsoupBrowser = JsoupBrowser()
-    val doc = jsoupBrowser.get(url)
+    val doc = jsoupBrowser.parseFile("data/test.html")
+    val doc2 = jsoupBrowser.get("http://example.com")
 
-    val wrapper = doc >?> element("#wrapper")
-    val div = doc >?> elementList("div")
+    val header = doc >> text("#header")
+    val items = doc >> elementList("#menu span")
+    val views = doc >> attr("content")("meta[name=viewport]")
+    val aText = items.map(_ >> allText("a"))
 
-    println(wrapper)
-    println(div)
-    Ok("Got it " + div)
+    val date = doc >> extractor("#date", text, asLocalDate("yyyy-MM-dd"))
+
+    val doubles = doc >> extractor("#mytable td", texts, seq(asDouble))
+
+    val h1s = doc >> extractor("h1", element, asIs[Element])
+
+    val h3 = doc >> "h3"
+
+    val allTexts = doc >> allText
+
+    val active = doc >> elementList(".active")
+
+    val ps = doc >> elementList("a")
+
+    val activeText = active >> text(".active")
+
+//    val as = doc >> elementList("#menu") >?> attr("href")("a")
+    val as = doc >> elementList("a") >?> attr("href")
+
+    Ok("Got it " + as)
   }
 }
