@@ -2,7 +2,7 @@ package daos
 
 import daos.params.CtripDao.Create
 import org.joda.time.DateTime
-import types.Ctrip
+import types._
 import scalikejdbc._
 
 object Ctrip extends SQLSyntaxSupport[Ctrip]
